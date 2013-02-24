@@ -6,43 +6,52 @@ var jekyllMapping = (function () {
                 var zoom      = maps[i].getAttribute("data-zoom"),
                     lat       = maps[i].getAttribute("data-latitude"),
                     lon       = maps[i].getAttribute("data-longitude"),
+                    locations = maps[i].getAttribute("data-locations"),
                     layers    = maps[i].getAttribute("data-layers"),
                     title     = maps[i].getAttribute("data-title"),
                     options   = {
-                    zoom: parseFloat(zoom),
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                    }, mainMarker;
+                        zoom      : parseFloat(zoom),
+                        mapTypeId : google.maps.MapTypeId.ROADMAP
+                    },
+                    mainMarker;
 
                 if (lat  && lon) {
                     options.center = new google.maps.LatLng(lat, lon);
                     map = new google.maps.Map(maps[i], options);
                     mainMarker = new google.maps.Marker({
-                        position: options.center,
-                        map: map,
-                        title: title
+                        position  : options.center,
+                        map       : map,
+                        title     : title,
+                        icon      : 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
                     });
                 } else {
                     options.center = new google.maps.LatLng(0, 0);
                     map = new google.maps.Map(maps[i], options);
                 }
 
-                //TODO: make locations work as well
-                //if (settings.locations instanceof Array) {
-                    //var bounds = new google.maps.LatLngBounds(), markers = [], s, l, m;
-                    //while (settings.locations.length > 0) {
-                        //s = settings.locations.pop();
-                        //l = new google.maps.LatLng(s.latitude, s.longitude);
-                        //m = new google.maps.Marker({
-                            //position: l,
-                            //map: map,
-                            //title: s.title
-                        //});
-                        //markers.push(m);
-                        //bounds.extend(l);
-                    //}
-                    //map.fitBounds(bounds);
-                //}
-
+                if (locations) {
+                    locations = JSON.parse(locations);
+                    var bounds = new google.maps.LatLngBounds(),
+                        markers = [],
+                        slice,
+                        coordinate,
+                        marker;
+                    while (locations.length > 0) {
+                        slice      = locations.pop();
+                        coordinate = new google.maps.LatLng(slice.latitude, slice.longitude);
+                        marker     = new google.maps.Marker({
+                            position  : coordinate,
+                            map       : map,
+                            title     : slice.title
+                        });
+                        if (slice.main) {
+                          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+                        }
+                        markers.push(marker);
+                        bounds.extend(coordinate);
+                    }
+                    map.fitBounds(bounds);
+                }
 
                 if (layers) {
                     layers = layers.split(' ');
