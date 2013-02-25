@@ -1,3 +1,5 @@
+window.maps = window.maps || [];
+
 var jekyllMapping = (function () {
     return {
         mappingInitialize: function () {
@@ -18,6 +20,7 @@ var jekyllMapping = (function () {
                 if (lat  && lon) {
                     options.center = new google.maps.LatLng(lat, lon);
                     map = new google.maps.Map(maps[i], options);
+                    window.maps.push(map);
                     mainMarker = new google.maps.Marker({
                         position  : options.center,
                         map       : map,
@@ -27,6 +30,7 @@ var jekyllMapping = (function () {
                 } else {
                     options.center = new google.maps.LatLng(0, 0);
                     map = new google.maps.Map(maps[i], options);
+                    window.maps.push(map);
                 }
 
                 if (locations) {

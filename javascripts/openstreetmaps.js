@@ -1,3 +1,5 @@
+window.maps = window.maps || [];
+
 var jekyllMapping = (function () {
     return {
         mappingInitialize: function() {
@@ -16,6 +18,7 @@ var jekyllMapping = (function () {
 
                 markers = new OpenLayers.Layer.Markers("Markers")
                 map = new OpenLayers.Map('jekyll-mapping-' + i);
+                window.maps.push(map);
                 map.addLayer(new OpenLayers.Layer.OSM());
                 map.addLayer(markers);
                 if (lat && lon) {
